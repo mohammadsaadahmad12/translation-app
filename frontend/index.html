@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Retail Translator</title>
+</head>
+<body>
+  <div id="root"></div>
+
+  <!-- React itself -->
+  <script src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <!-- ReactDOM: connects React to the actual browser DOM -->
+  <script src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <!-- Babel: compiles JSX into plain JS, live, in the browser -->
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+
+  <script type="text/babel">
+    // our React code goes here
+    // function App() {
+    // return React.createElement('h1', null, 'Hello from React');
+    // }
+    // const root = ReactDOM.createRoot(document.getElementById('root'));
+    // root.render(React.createElement(App));
+
+function App() {
+  const [messages, setMessages] = React.useState([]);
+  const [draft, setDraft] = React.useState("");
+  const [role, setRole] = React.useState("staff");
+
+  async function sendMessage() {
+  const response = await fetch("http://localhost:3001/api/message", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ role: role, text: draft, targetLanguage: "Spanish" }),
+  });
+
+  const data = await response.json();
+
+  // setMessages logic goes here — using data.reply
+setMessages([
+  ...messages,
+  { role: role, text: draft },
+  { role: "assistant", text: data.reply },
+]);
+setDraft("");
+}
+
+  return (
+    <div>
+          <select value={role} onChange={(e) => setRole(e.target.value)}>
+            <option value="staff">Staff</option>
+            <option value="customer">Customer</option>
+            </select>
+      <input
+        value={draft}
+        onChange={(e) => setDraft(e.target.value)}
+      />
+      <button onClick={sendMessage}>Send</button>
+      <ul>
+  {messages.map((msg, index) => (
+    <li key={index}>({msg.role}) {msg.text}</li>
+  ))}
+</ul>
+    </div>
+    
+  );
+}
+
+    const root = ReactDOM.createRoot(document.getElementById('root'));
+    root.render(<App />);
+
+    
+  </script>
+</body>
+</html>
