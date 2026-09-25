@@ -30,7 +30,7 @@ function App() {
   const response = await fetch("http://localhost:3001/api/message", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ role: role, text: draft, targetLanguage: "Spanish" }),
+    body: JSON.stringify({ role: role, text: draft, targetLanguage: "Hindi" }),
   });
 
   const data = await response.json();
